@@ -7,9 +7,7 @@ export default function HomeScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText style={styles.title}>Code Management</ThemedText>
-      <ThemedText style={styles.text}>
-        Enter and view your check-in codes here
-      </ThemedText>
+      <ThemedText style={styles.text}>Enter and view your check-in codes here</ThemedText>
     </ThemedView>
   );
 }
