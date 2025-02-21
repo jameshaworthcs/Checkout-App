@@ -2,14 +2,13 @@ import { StyleSheet } from 'react-native';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { commonStyles } from '@/constants/Styles';
 
-export default function HomeScreen() {
+export default function AutoCheckinScreen() {
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText style={styles.title}>Code Management</ThemedText>
-      <ThemedText style={styles.text}>
-        Enter and view your check-in codes here
-      </ThemedText>
+    <ThemedView style={commonStyles.container}>
+      <ThemedText style={commonStyles.title}>AutoCheckin</ThemedText>
+      <ThemedText style={commonStyles.text}>Manage AutoCheckin account and view statistics</ThemedText>
     </ThemedView>
   );
 }
