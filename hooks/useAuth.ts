@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 
 const API_TOKEN_KEY = 'api_token';
 const IS_LOGGED_IN_KEY = 'is_logged_in';
+const ACCOUNT_INFO_KEY = 'account_info';
 
 export function useAuth() {
   const [token, setToken] = useState<string | null>(null);
@@ -16,6 +17,7 @@ export function useAuth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
+  const [accountInfo, setAccountInfo] = useState<any>(null);
   useEffect(() => {
     const initAuth = async () => {
       const [storedToken, storedLoggedIn] = await Promise.all([
@@ -55,21 +57,24 @@ export function useAuth() {
             body: { apptoken: appToken },
           });
 
-          const data = await verifyResponse.json();
-
-          if (!data.success) {
-            setError(data.msg);
+          if (!verifyResponse.success) {
+            setError(verifyResponse.error || 'Verification failed');
             setLoading(false);
             await SecureStore.setItemAsync(IS_LOGGED_IN_KEY, 'false');
             return null;
           }
 
+          const data = verifyResponse.data;
           setUsername(data.username);
+          setAccountInfo(data.accountInfo);
           setLoading(false);
 
-          // Store the API token and login status securely
-          await SecureStore.setItemAsync(API_TOKEN_KEY, data.api_token);
-          await SecureStore.setItemAsync(IS_LOGGED_IN_KEY, 'true');
+          // Store the API token, login status, and account info securely
+          await Promise.all([
+            SecureStore.setItemAsync(API_TOKEN_KEY, String(data.api_token)),
+            SecureStore.setItemAsync(IS_LOGGED_IN_KEY, 'true'),
+            SecureStore.setItemAsync(ACCOUNT_INFO_KEY, JSON.stringify(data.accountInfo || {})),
+          ]);
           setToken(data.api_token);
           setIsLoggedIn(true);
 
@@ -111,11 +116,13 @@ export function useAuth() {
   const logout = async () => {
     await Promise.all([
       SecureStore.deleteItemAsync(API_TOKEN_KEY),
+      SecureStore.deleteItemAsync(ACCOUNT_INFO_KEY),
       SecureStore.setItemAsync(IS_LOGGED_IN_KEY, 'false'),
     ]);
     setToken(null);
     setIsLoggedIn(false);
     setUsername(null);
+    setAccountInfo(null);
   };
   return {
     token,
@@ -124,6 +131,7 @@ export function useAuth() {
     logout,
     getStoredToken,
     isLoggedIn,
+    accountInfo,
     modalState: {
       visible: modalVisible,
       loading,
