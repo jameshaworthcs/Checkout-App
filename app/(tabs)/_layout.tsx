@@ -1,16 +1,17 @@
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Platform } from 'react-native';
 
 import { TopBar } from '@/components/TopBar';
 
 import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import { AutocheckinIcon } from '@/components/ui/AutocheckinIcon';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-
+import { HistoryIcon } from '@/components/ui/HistoryIcon';
+import { SettingsIcon } from '@/components/ui/SettingsIcon';
+import { CheckOutIcon } from '@/components/ui/CheckOutIcon';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
@@ -33,29 +34,29 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Home',
-            tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
+            title: 'CheckOut',
+            tabBarIcon: ({ color }) => <CheckOutIcon size={24} color={color} />,
           }}
         />
         <Tabs.Screen
           name="autocheckin"
           options={{
             title: 'AutoCheckin',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="qrcode" color={color} />,
+            tabBarIcon: ({ color }) => <AutocheckinIcon size={24} color={color} />,
           }}
         />
         <Tabs.Screen
           name="history"
           options={{
             title: 'History',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="clock.fill" color={color} />,
+            tabBarIcon: ({ color }) => <HistoryIcon size={24} color={color} />,
           }}
         />
         <Tabs.Screen
           name="settings"
           options={{
             title: 'Settings',
-            tabBarIcon: ({ color }) => <Ionicons name="settings" size={24} color={color} />,
+            tabBarIcon: ({ color }) => <SettingsIcon size={24} color={color} />,
           }}
           listeners={({ navigation }) => ({
             tabPress: () => {

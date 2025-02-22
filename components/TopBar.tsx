@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { ThemedView } from './ThemedView';
+import { commonStyles } from '@/constants/Styles';
 
 export function TopBar() {
   const insets = useSafeAreaInsets();
@@ -12,6 +13,8 @@ export function TopBar() {
     <ThemedView
       style={[
         styles.container,
+        commonStyles.navbar,
+        colorScheme === 'dark' && commonStyles.navbarDark,
         {
           paddingTop: insets.top,
           height: 60 + insets.top,

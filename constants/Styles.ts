@@ -12,6 +12,12 @@ export const commonStyles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
   },
+  navbar: {
+    backgroundColor: 'white',
+  },
+  navbarDark: {
+    backgroundColor: '#10151D',
+  },
   text: {
     fontSize: 16,
     textAlign: 'center',
