@@ -13,6 +13,7 @@ type ApiResponse<T = any> = {
   success: boolean;
   data?: T;
   error?: string;
+  status?: number;
 };
 
 export async function checkoutApi<T = any>(
@@ -21,6 +22,7 @@ export async function checkoutApi<T = any>(
 ): Promise<ApiResponse<T>> {
   try {
     const token = await SecureStore.getItemAsync(API_TOKEN_KEY);
+    console.log('API Token present:', !!token);
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -32,26 +34,51 @@ export async function checkoutApi<T = any>(
       headers['x-checkout-key'] = token;
     }
 
-    const response = await fetch(`${CHECKOUT_API_URL}${path}`, {
+    const url = `${CHECKOUT_API_URL}${path}`;
+
+    const response = await fetch(url, {
       method: options.method || 'GET',
       headers,
       body: options.body ? JSON.stringify(options.body) : undefined,
     });
 
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
     if (!response.ok) {
       let errorMessage = 'An error occurred while processing your request';
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.message || errorMessage;
-      } catch {}
+      let errorData;
 
-      return { success: false, error: errorMessage };
+      try {
+        errorData = await response.json();
+        console.log('Error response data:', errorData);
+        errorMessage = errorData.message || errorMessage;
+      } catch (parseError) {
+        console.error('Error parsing error response:', parseError);
+      }
+
+      return {
+        success: false,
+        error: errorMessage,
+        status: response.status,
+        data: errorData,
+      };
     }
 
     const data = await response.json();
-    return { success: true, data };
+
+    return {
+      success: true,
+      data,
+      status: response.status,
+    };
   } catch (error) {
+    console.error('API request failed:', error);
     const errorMessage = error instanceof Error ? error.message : 'Network error occurred';
-    return { success: false, error: errorMessage };
+    return {
+      success: false,
+      error: errorMessage,
+      status: 0, // 0 indicates network error
+    };
   }
 }

@@ -1,23 +1,31 @@
-import { useEffect, Fragment } from 'react';
+import { Fragment } from 'react';
 import { ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { AuthModal } from '@/components/AuthModal';
 import { useAuth } from '@/hooks/useAuth';
-import { useAuthSettingsScreen } from '@/hooks/useAuthSettingsScreen';
+import { useSettingsAccount } from '@/hooks/useSettingsAccount';
 import { commonStyles, styles } from './settings.styles';
 import { CHECKOUT_API_URL } from '@/constants/api';
 
 export default function SettingsScreen() {
-  const { signIn, logout, modalState, modalActions, isLoggedIn, getStoredToken } = useAuth();
-  const { accountInfo, loading, fetchAccountInfo } = useAuthSettingsScreen();
+  const { signIn, logout, modalState, modalActions, isLoggedIn } = useAuth();
+  const { accountInfo, isRefreshing, fetchAccountInfo, clearAccountInfo } = useSettingsAccount();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      await getStoredToken();
-    };
-    checkAuth();
-  }, [getStoredToken]);
+  useFocusEffect(
+    useCallback(() => {
+      if (isLoggedIn) {
+        fetchAccountInfo(false);
+      }
+    }, [isLoggedIn, fetchAccountInfo])
+  );
+
+  const handleLogout = async () => {
+    clearAccountInfo();
+    await logout();
+  };
 
   const openLink = (url: string) => {
     Linking.openURL(url);
@@ -55,30 +63,28 @@ export default function SettingsScreen() {
                 Sign in to sync your data and access additional features
               </ThemedText>
             </Fragment>
-          ) : loading ? (
+          ) : !accountInfo ? (
             <ThemedText>Loading account information...</ThemedText>
           ) : (
-            accountInfo && (
-              <Fragment>
-                <ThemedView style={styles.infoRow}>
-                  <ThemedText style={styles.label}>Username:</ThemedText>
-                  <ThemedText style={styles.value}>{accountInfo.username}</ThemedText>
-                </ThemedView>
-                <ThemedView style={styles.infoRow}>
-                  <ThemedText style={styles.label}>Email:</ThemedText>
-                  <ThemedText style={styles.value}>{accountInfo.email}</ThemedText>
-                </ThemedView>
-                <ThemedView style={styles.infoRow}>
-                  <ThemedText style={styles.label}>Account Created:</ThemedText>
-                  <ThemedText style={styles.value}>
-                    {new Date(accountInfo.accountCreationTime).toLocaleDateString()}
-                  </ThemedText>
-                </ThemedView>
-                <TouchableOpacity onPress={() => openLink(`${CHECKOUT_API_URL}/account`)}>
-                  <ThemedText style={styles.link}>Manage Account</ThemedText>
-                </TouchableOpacity>
-              </Fragment>
-            )
+            <Fragment>
+              <ThemedView style={styles.infoRow}>
+                <ThemedText style={styles.label}>Username:</ThemedText>
+                <ThemedText style={styles.value}>{accountInfo.username}</ThemedText>
+              </ThemedView>
+              <ThemedView style={styles.infoRow}>
+                <ThemedText style={styles.label}>Email:</ThemedText>
+                <ThemedText style={styles.value}>{accountInfo.email}</ThemedText>
+              </ThemedView>
+              <ThemedView style={styles.infoRow}>
+                <ThemedText style={styles.label}>Account Created:</ThemedText>
+                <ThemedText style={styles.value}>
+                  {new Date(accountInfo.accountCreationTime).toLocaleDateString()}
+                </ThemedText>
+              </ThemedView>
+              <TouchableOpacity onPress={() => openLink(`${CHECKOUT_API_URL}/account`)}>
+                <ThemedText style={styles.link}>Manage Account</ThemedText>
+              </TouchableOpacity>
+            </Fragment>
           )}
         </ThemedView>
 
@@ -109,11 +115,11 @@ export default function SettingsScreen() {
           {isLoggedIn && (
             <Fragment>
               <TouchableOpacity onPress={() => fetchAccountInfo(true)} style={styles.refreshButton}>
-                <ThemedText style={styles.footerLink}>
-                  {loading ? 'Refreshing...' : 'Refresh Account Data'}
+                <ThemedText style={[styles.footerLink, isRefreshing && styles.textFaded]}>
+                  {isRefreshing ? 'Refreshing...' : 'Refresh Account Data'}
                 </ThemedText>
               </TouchableOpacity>
-              <TouchableOpacity onPress={logout}>
+              <TouchableOpacity onPress={handleLogout}>
                 <ThemedText style={styles.logoutText}>Log Out</ThemedText>
               </TouchableOpacity>
             </Fragment>

@@ -72,4 +72,7 @@ export const styles = StyleSheet.create({
     marginVertical: 8,
     opacity: 0.8,
   },
+  textFaded: {
+    opacity: 0.6,
+  },
 });

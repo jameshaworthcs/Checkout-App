@@ -78,6 +78,18 @@ export function useAuth() {
           setToken(data.api_token);
           setIsLoggedIn(true);
 
+          // Fetch fresh account information without showing toast
+          try {
+            const accountResponse = await checkoutApi('/api/settings/account');
+            if (accountResponse.success && accountResponse.data?.accountInfo) {
+              const freshAccountInfo = accountResponse.data.accountInfo;
+              setAccountInfo(freshAccountInfo);
+              await SecureStore.setItemAsync(ACCOUNT_INFO_KEY, JSON.stringify(freshAccountInfo));
+            }
+          } catch (error) {
+            console.error('Error fetching fresh account info:', error);
+          }
+
           // Close modal after a brief delay to show success state
           setTimeout(() => {
             setModalVisible(false);

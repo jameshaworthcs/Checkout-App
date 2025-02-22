@@ -1,4 +1,5 @@
 import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Platform } from 'react-native';
 
@@ -32,8 +33,8 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: 'CheckOut',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+            title: 'Home',
+            tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
           }}
         />
         <Tabs.Screen
@@ -54,8 +55,14 @@ export default function TabLayout() {
           name="settings"
           options={{
             title: 'Settings',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="gear" color={color} />,
+            tabBarIcon: ({ color }) => <Ionicons name="settings" size={24} color={color} />,
           }}
+          listeners={({ navigation }) => ({
+            tabPress: () => {
+              // Force a remount of the screen
+              navigation.setParams({ refresh: Date.now() });
+            },
+          })}
         />
       </Tabs>
     </>
