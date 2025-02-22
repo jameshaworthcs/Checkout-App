@@ -15,7 +15,9 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SegoeUI: require('../assets/fonts/segoe-ui.ttf'),
+    SegoeUIBold: require('../assets/fonts/segoe-ui-bold.ttf'),
+    SegoeUISemiBold: require('../assets/fonts/segoe-ui-semibold.ttf'),
   });
 
   useEffect(() => {

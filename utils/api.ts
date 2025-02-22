@@ -22,7 +22,6 @@ export async function checkoutApi<T = any>(
 ): Promise<ApiResponse<T>> {
   try {
     const token = await SecureStore.getItemAsync(API_TOKEN_KEY);
-    console.log('API Token present:', !!token);
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -41,9 +40,6 @@ export async function checkoutApi<T = any>(
       headers,
       body: options.body ? JSON.stringify(options.body) : undefined,
     });
-
-    console.log('Response status:', response.status);
-    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
     if (!response.ok) {
       let errorMessage = 'An error occurred while processing your request';
