@@ -7,12 +7,14 @@ import { ThemedView } from '@/components/ThemedView';
 import { AuthModal } from '@/components/AuthModal';
 import { useAuth } from '@/hooks/useAuth';
 import { useSettingsAccount } from '@/hooks/useSettingsAccount';
-import { commonStyles, styles } from './settings.styles';
+import { commonStyles, styles } from '../../constants/settings.styles';
 import { CHECKOUT_API_URL } from '@/constants/api';
+import { useToast } from '@/hooks/useToast';
 
 export default function SettingsScreen() {
   const { signIn, logout, modalState, modalActions, isLoggedIn } = useAuth();
   const { accountInfo, isRefreshing, fetchAccountInfo, clearAccountInfo } = useSettingsAccount();
+  const toast = useToast();
 
   useFocusEffect(
     useCallback(() => {
@@ -25,6 +27,7 @@ export default function SettingsScreen() {
   const handleLogout = async () => {
     clearAccountInfo();
     await logout();
+    toast.success('Logged out successfully');
   };
 
   const openLink = (url: string) => {
