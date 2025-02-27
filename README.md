@@ -24,3 +24,13 @@ In the output, you'll find options to open the app in a
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+
+## ⚠️ Security Notice
+
+This app is primarily designed and intended for iOS and Android platforms. While web support exists, it is not recommended for production use due to security limitations:
+
+- Web platform storage is limited to localStorage, which is less secure than native secure storage
+- Authentication tokens and sensitive data may be exposed in browser storage
+- Web authentication flows have different security characteristics than native flows
+
+For secure usage, please develop on the iOS or Android versions of the app using Expo Go.

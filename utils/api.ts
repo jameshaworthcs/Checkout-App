@@ -1,5 +1,6 @@
-import * as SecureStore from 'expo-secure-store';
 import { CHECKOUT_API_URL } from '@/constants/api';
+import { storage } from '@/utils/storage';
+import { Platform } from 'react-native';
 
 const API_TOKEN_KEY = 'api_token';
 
@@ -9,37 +10,53 @@ type RequestOptions = {
   headers?: Record<string, string>;
 };
 
-type ApiResponse<T = any> = {
+interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
   error?: string;
-  status?: number;
-};
+  status: number;
+}
 
 export async function checkoutApi<T = any>(
   path: string,
   options: RequestOptions = {}
 ): Promise<ApiResponse<T>> {
   try {
-    const token = await SecureStore.getItemAsync(API_TOKEN_KEY);
+    const token = await storage.getItem(API_TOKEN_KEY);
 
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'User-Agent': 'CheckOut-App/1.0',
+      Accept: 'application/json',
       ...options.headers,
     };
+
+    // Only add Content-Type for non-GET requests or when there's a body
+    if (options.method !== 'GET' || options.body) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     if (token) {
       headers['x-checkout-key'] = token;
     }
 
+    // Add User-Agent only for mobile platforms
+    if (Platform.OS !== 'web') {
+      headers['User-Agent'] = 'CheckOut-App/1.0';
+    }
+
     const url = `${CHECKOUT_API_URL}${path}`;
 
-    const response = await fetch(url, {
+    const fetchOptions: RequestInit = {
       method: options.method || 'GET',
       headers,
-      body: options.body ? JSON.stringify(options.body) : undefined,
-    });
+      credentials: 'include', // Include cookies if any
+      mode: 'cors', // Enable CORS
+    };
+
+    if (options.body) {
+      fetchOptions.body = JSON.stringify(options.body);
+    }
+
+    const response = await fetch(url, fetchOptions);
 
     if (!response.ok) {
       let errorMessage = 'An error occurred while processing your request';
