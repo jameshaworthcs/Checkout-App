@@ -1,14 +1,16 @@
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { commonStyles } from '@/constants/Styles';
+import { createSharedStyles } from '@/app/styles/shared.styles';
+import { useAppTheme } from '@/hooks/useAppTheme';
 
 export default function AutoCheckinScreen() {
+  const { theme } = useAppTheme();
+  const styles = createSharedStyles(theme);
+
   return (
-    <ThemedView style={commonStyles.container}>
-      <ThemedText style={commonStyles.title}>AutoCheckin</ThemedText>
-      <ThemedText style={commonStyles.text}>
-        Manage AutoCheckin account and view statistics
-      </ThemedText>
+    <ThemedView style={styles.container}>
+      <ThemedText style={styles.title}>AutoCheckin</ThemedText>
+      <ThemedText style={styles.text}>Manage AutoCheckin account and view statistics</ThemedText>
     </ThemedView>
   );
 }

@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { ScrollView, TouchableOpacity, Linking, View, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { ThemedText } from '@/components/ThemedText';
@@ -7,14 +7,23 @@ import { ThemedView } from '@/components/ThemedView';
 import { AuthModal } from '@/components/AuthModal';
 import { useAuth } from '@/hooks/useAuth';
 import { useSettingsAccount } from '@/hooks/useSettingsAccount';
-import { commonStyles, styles } from '../../constants/settings.styles';
 import { CHECKOUT_API_URL } from '@/constants/api';
 import { useToast } from '@/hooks/useToast';
+import { createSharedStyles } from '@/app/styles/shared.styles';
+import { createSettingsStyles } from '@/app/styles/settings.styles';
+import { useAppTheme } from '@/hooks/useAppTheme';
+import Constants from 'expo-constants';
 
 export default function SettingsScreen() {
   const { signIn, logout, modalState, modalActions, isLoggedIn } = useAuth();
-  const { accountInfo, isRefreshing, fetchAccountInfo, clearAccountInfo } = useSettingsAccount();
+  const { accountInfo, fetchAccountInfo, clearAccountInfo } = useSettingsAccount();
   const toast = useToast();
+  const { theme } = useAppTheme();
+  const sharedStyles = createSharedStyles(theme);
+  const styles = createSettingsStyles(theme);
+
+  const currentYear = new Date().getFullYear();
+  const appVersion = Constants.expoConfig?.version || '1.0.0';
 
   useFocusEffect(
     useCallback(() => {
@@ -34,24 +43,37 @@ export default function SettingsScreen() {
     Linking.openURL(url);
   };
 
+  const showAdvancedOptions = () => {
+    Alert.alert('Advanced Options', '', [
+      {
+        text: 'Refresh Account Data',
+        onPress: () => fetchAccountInfo(true),
+      },
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+    ]);
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <ThemedView style={commonStyles.container}>
+      <ThemedView style={[sharedStyles.container, { alignItems: 'stretch' }]}>
         {/* Course Section */}
         <ThemedView style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Course</ThemedText>
-          <ThemedView style={styles.infoRow}>
+          <View style={styles.infoRow}>
             <ThemedText style={styles.label}>Institution:</ThemedText>
             <ThemedText style={styles.value}>University of York</ThemedText>
-          </ThemedView>
-          <ThemedView style={styles.infoRow}>
+          </View>
+          <View style={styles.infoRow}>
             <ThemedText style={styles.label}>Course:</ThemedText>
             <ThemedText style={styles.value}>Computer Science</ThemedText>
-          </ThemedView>
-          <ThemedView style={styles.infoRow}>
+          </View>
+          <View style={styles.infoRow}>
             <ThemedText style={styles.label}>Year:</ThemedText>
             <ThemedText style={styles.value}>2</ThemedText>
-          </ThemedView>
+          </View>
         </ThemedView>
 
         {/* Account Section */}
@@ -70,20 +92,20 @@ export default function SettingsScreen() {
             <ThemedText>Loading account information...</ThemedText>
           ) : (
             <Fragment>
-              <ThemedView style={styles.infoRow}>
+              <View style={styles.infoRow}>
                 <ThemedText style={styles.label}>Username:</ThemedText>
                 <ThemedText style={styles.value}>{accountInfo.username}</ThemedText>
-              </ThemedView>
-              <ThemedView style={styles.infoRow}>
+              </View>
+              <View style={styles.infoRow}>
                 <ThemedText style={styles.label}>Email:</ThemedText>
                 <ThemedText style={styles.value}>{accountInfo.email}</ThemedText>
-              </ThemedView>
-              <ThemedView style={styles.infoRow}>
+              </View>
+              <View style={styles.infoRow}>
                 <ThemedText style={styles.label}>Account Created:</ThemedText>
                 <ThemedText style={styles.value}>
                   {new Date(accountInfo.accountCreationTime).toLocaleDateString()}
                 </ThemedText>
-              </ThemedView>
+              </View>
               <TouchableOpacity onPress={() => openLink(`${CHECKOUT_API_URL}/account`)}>
                 <ThemedText style={styles.link}>Manage Account</ThemedText>
               </TouchableOpacity>
@@ -108,26 +130,34 @@ export default function SettingsScreen() {
         </ThemedView>
 
         {/* Footer */}
-        <ThemedView style={styles.footer}>
-          <TouchableOpacity onPress={() => openLink(`${CHECKOUT_API_URL}/terms-privacy`)}>
-            <ThemedText style={styles.footerLink}>Privacy and Terms</ThemedText>
+        <View style={styles.footer}>
+          <View style={styles.footerLinksRow}>
+            <TouchableOpacity onPress={() => openLink(`${CHECKOUT_API_URL}/terms-privacy`)}>
+              <ThemedText style={styles.footerLink}>Privacy and Terms</ThemedText>
+            </TouchableOpacity>
+            <ThemedText style={styles.footerLink}> • </ThemedText>
+            <TouchableOpacity onPress={() => openLink(`${CHECKOUT_API_URL}/learn-faq`)}>
+              <ThemedText style={styles.footerLink}>Help</ThemedText>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity onPress={showAdvancedOptions}>
+            <ThemedText style={styles.footerLink}>Advanced</ThemedText>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => openLink(`${CHECKOUT_API_URL}/learn-faq`)}>
-            <ThemedText style={styles.footerLink}>Help and Support</ThemedText>
-          </TouchableOpacity>
+
           {isLoggedIn && (
             <Fragment>
-              <TouchableOpacity onPress={() => fetchAccountInfo(true)} style={styles.refreshButton}>
-                <ThemedText style={[styles.footerLink, isRefreshing && styles.textFaded]}>
-                  {isRefreshing ? 'Refreshing...' : 'Refresh Account Data'}
-                </ThemedText>
-              </TouchableOpacity>
               <TouchableOpacity onPress={handleLogout}>
                 <ThemedText style={styles.logoutText}>Log Out</ThemedText>
               </TouchableOpacity>
             </Fragment>
           )}
-        </ThemedView>
+
+          <View style={styles.copyrightContainer}>
+            <ThemedText style={styles.copyrightText}>Version {appVersion}</ThemedText>
+            <ThemedText style={styles.copyrightText}>© {currentYear} JEM Media</ThemedText>
+          </View>
+        </View>
       </ThemedView>
 
       <AuthModal
