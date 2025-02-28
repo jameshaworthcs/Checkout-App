@@ -1,59 +1,50 @@
 import { StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Colors';
-import { sharedStyles } from './shared.styles';
 
-type Theme = typeof Colors.light | typeof Colors.dark;
+type ColorTheme = typeof Colors.light;
 
-type ThemeColors = {
-  background: string;
-  text: string;
-  primary: string;
-  secondary: string;
-  error: string;
-  errorBg: string;
-  contentBackground: string;
-  pageBackground: string;
-  tint: string;
-  icon: string;
-};
-
-export const createHistoryStyles = (theme: Theme) =>
+export const createHistoryStyles = (theme: ColorTheme) =>
   StyleSheet.create({
     container: {
-      ...sharedStyles.pageContainer,
-      backgroundColor: theme.pageBackground,
+      flex: 1,
+      backgroundColor: theme.background,
+      padding: 16,
+      paddingBottom: 0,
     },
     centerContent: {
       justifyContent: 'center',
       alignItems: 'center',
     },
     header: {
-      marginBottom: 20,
+      marginBottom: 16,
     },
     title: {
       fontSize: 24,
       fontWeight: 'bold',
-      marginBottom: 8,
       color: theme.text,
+      marginBottom: 8,
     },
     helpLink: {
-      marginBottom: 16,
       color: theme.primary,
-      fontSize: 16,
+      marginBottom: 8,
     },
     statsText: {
-      fontSize: 16,
-      marginBottom: 16,
-      color: theme.text,
+      color: theme.secondary,
+      fontSize: 12,
     },
     codeList: {
       flex: 1,
     },
     codeItem: {
       backgroundColor: theme.contentBackground,
-      padding: 16,
       borderRadius: 8,
+      padding: 16,
       marginBottom: 12,
+      shadowColor: theme.text,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
     },
     codeHeader: {
       flexDirection: 'row',
@@ -67,13 +58,13 @@ export const createHistoryStyles = (theme: Theme) =>
       color: theme.text,
     },
     codeDate: {
-      fontSize: 16,
-      color: theme.text,
+      color: theme.secondary,
+      fontSize: 14,
     },
     codeId: {
-      fontSize: 16,
-      marginBottom: 8,
       color: theme.text,
+      fontSize: 14,
+      marginBottom: 8,
     },
     codeFooter: {
       flexDirection: 'row',
@@ -81,38 +72,45 @@ export const createHistoryStyles = (theme: Theme) =>
       alignItems: 'center',
     },
     sourceText: {
-      fontSize: 14,
       color: theme.secondary,
+      fontSize: 12,
     },
     actionButtons: {
       flexDirection: 'row',
-      gap: 8,
+      gap: 12,
     },
     actionButton: {
+      color: theme.primary,
       fontSize: 14,
-      padding: 6,
-      paddingHorizontal: 12,
-      backgroundColor: theme.contentBackground,
-      borderRadius: 4,
-      color: theme.text,
     },
     undoButton: {
-      backgroundColor: theme.errorBg,
       color: theme.error,
     },
     emptyState: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: 40,
+      paddingVertical: 32,
     },
     emptyStateText: {
-      fontSize: 16,
       color: theme.secondary,
+      fontSize: 16,
+      textAlign: 'center',
+    },
+    loadingMore: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingVertical: 16,
+      gap: 8,
+    },
+    loadingText: {
+      color: theme.secondary,
+      fontSize: 14,
     },
   });
 
-export const createHelpStyles = (theme: ThemeColors) =>
+export const createHelpStyles = (theme: ColorTheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
