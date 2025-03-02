@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
-import { ScrollView, TouchableOpacity, Linking, View, Alert } from 'react-native';
+import { TouchableOpacity, Linking, View, Alert } from 'react-native';
+import { TabScreenScrollView } from '@/components/TabScreenScrollView';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { ThemedText } from '@/components/ThemedText';
@@ -13,6 +14,7 @@ import { createSharedStyles } from '@/app/styles/shared.styles';
 import { createSettingsStyles } from '@/app/styles/settings.styles';
 import { useAppTheme } from '@/hooks/useAppTheme';
 import Constants from 'expo-constants';
+import { Colors } from '@/constants/Colors';
 
 export default function SettingsScreen() {
   const { signIn, logout, modalState, modalActions, isLoggedIn } = useAuth();
@@ -20,7 +22,7 @@ export default function SettingsScreen() {
   const toast = useToast();
   const { theme } = useAppTheme();
   const sharedStyles = createSharedStyles(theme);
-  const styles = createSettingsStyles(theme);
+  const styles = createSettingsStyles(theme as typeof Colors.light);
 
   const currentYear = new Date().getFullYear();
   const appVersion = Constants.expoConfig?.version || '1.0.0';
@@ -57,8 +59,14 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <ThemedView style={[sharedStyles.container, { alignItems: 'stretch' }]}>
+    <TabScreenScrollView>
+      <ThemedView
+        style={[sharedStyles.container, { alignItems: 'stretch', paddingHorizontal: 16 }]}>
+        {/* Title */}
+        <View style={styles.header}>
+          <ThemedText style={styles.title}>Settings</ThemedText>
+        </View>
+
         {/* Course Section */}
         <ThemedView style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Course</ThemedText>
@@ -82,10 +90,10 @@ export default function SettingsScreen() {
           {!isLoggedIn ? (
             <Fragment>
               <TouchableOpacity style={styles.button} onPress={signIn}>
-                <ThemedText style={styles.buttonText}>Sign In</ThemedText>
+                <ThemedText style={styles.buttonText}>Sign in or Create Account</ThemedText>
               </TouchableOpacity>
               <ThemedText style={styles.helperText}>
-                Sign in to sync your data and access additional features
+                Sign in or create an account to sync your data and access additional features
               </ThemedText>
             </Fragment>
           ) : !accountInfo ? (
@@ -117,7 +125,7 @@ export default function SettingsScreen() {
         <ThemedView style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Theme</ThemedText>
           <ThemedText style={styles.helperText}>
-            The app follows your device theme settings
+            The app follows your device's theme settings.
           </ThemedText>
         </ThemedView>
 
@@ -169,6 +177,6 @@ export default function SettingsScreen() {
         onRetry={modalActions.onRetry}
         onClose={modalActions.onClose}
       />
-    </ScrollView>
+    </TabScreenScrollView>
   );
 }

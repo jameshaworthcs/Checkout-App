@@ -1,28 +1,32 @@
 import { StyleSheet } from 'react-native';
+import { Colors } from '@/constants/Colors';
 
-type ThemeColors = {
-  background: string;
-  text: string;
-  primary: string;
-  secondary: string;
-  error: string;
-  errorBg: string;
-  contentBackground: string;
-  pageBackground: string;
-  tint: string;
-  icon: string;
-};
+type ColorTheme = typeof Colors.light;
 
-export const createSettingsStyles = (theme: ThemeColors) =>
+export const createSettingsStyles = (theme: ColorTheme) =>
   StyleSheet.create({
+    header: {
+      marginBottom: 16,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: theme.text,
+      marginBottom: 8,
+    },
     scrollContainer: {
-      paddingBottom: 80, // Adds padding at the bottom to account for the navbar
+      // Remove the paddingBottom: 80 line as it's now handled by TabScreenScrollView
     },
     section: {
       marginBottom: 24,
       padding: 16,
       borderRadius: 8,
       backgroundColor: theme.contentBackground,
+      shadowColor: theme.text,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 2,
     },
     sectionTitle: {
       fontSize: 20,
@@ -45,14 +49,14 @@ export const createSettingsStyles = (theme: ThemeColors) =>
       color: theme.text,
     },
     button: {
-      backgroundColor: theme.primary,
+      backgroundColor: theme.ctaBackground,
       padding: 12,
       borderRadius: 8,
       alignItems: 'center',
       marginBottom: 8,
     },
     buttonText: {
-      color: '#FFFFFF',
+      color: theme.ctaText,
       fontWeight: '600',
     },
     helperText: {

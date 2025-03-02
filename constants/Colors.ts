@@ -6,6 +6,31 @@
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
+export type ThemeColors = {
+  background: string;
+  text: string;
+  primary: string;
+  secondary: string;
+  error: string;
+  errorBg: string;
+  contentBackground: string;
+  pageBackground: string;
+  tint: string;
+  icon: string;
+  tabIconDefault: string;
+  tabIconSelected: string;
+  ctaBackground: string;
+  ctaText: string;
+  goodButton: {
+    background: string;
+    text: string;
+  };
+  badButton: {
+    background: string;
+    text: string;
+  };
+};
+
 export const Colors = {
   light: {
     background: '#FFFFFF',
@@ -20,11 +45,21 @@ export const Colors = {
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
+    ctaBackground: '#2196F3',
+    ctaText: '#FFFFFF',
+    goodButton: {
+      background: '#27AE601A',
+      text: '#27AE60',
+    },
+    badButton: {
+      background: '#EB57571A',
+      text: '#E64800',
+    },
   },
   dark: {
-    background: '#000000',
+    background: '#10151D',
     text: '#FFFFFF',
-    primary: '#64B5F6',
+    primary: '#b895fd',
     secondary: '#999999',
     error: '#ef5350',
     errorBg: '#311111',
@@ -34,5 +69,15 @@ export const Colors = {
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
+    ctaBackground: '#b895fd',
+    ctaText: '#000000',
+    goodButton: {
+      background: '#27AE6033',
+      text: '#27AE60',
+    },
+    badButton: {
+      background: '#EB575733',
+      text: '#E64800',
+    },
   },
-} as const;
+} as const satisfies Record<'light' | 'dark', ThemeColors>;

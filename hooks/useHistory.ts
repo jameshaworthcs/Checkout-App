@@ -46,18 +46,22 @@ export interface HistoryData {
 export function useHistory() {
   const [historyData, setHistoryData] = useState<HistoryData | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [lastFetchTime, setLastFetchTime] = useState<number>(0);
   const [offset, setOffset] = useState(0);
   const limit = 10;
   const toast = useToast();
 
   const fetchHistory = useCallback(
-    async (showToast = false, reset = false) => {
-      // Prevent duplicate requests within 2 seconds
+    async (showToast = false, reset = false, isLoadingMoreAction = false) => {
       const now = Date.now();
-      if (isRefreshing || now - lastFetchTime < 2000) return;
+      if (isRefreshing || (!isLoadingMoreAction && now - lastFetchTime < 2000)) return;
 
-      setIsRefreshing(true);
+      if (isLoadingMoreAction) {
+        setIsLoadingMore(true);
+      } else {
+        setIsRefreshing(true);
+      }
       setLastFetchTime(now);
 
       try {
@@ -71,6 +75,7 @@ export function useHistory() {
         }
 
         const newData = response.data;
+
         setHistoryData(prevData => {
           if (!prevData || reset) return newData;
           return {
@@ -81,7 +86,7 @@ export function useHistory() {
         });
 
         if (reset) {
-          setOffset(0);
+          setOffset(limit); // Start at limit after initial load
         } else {
           setOffset(currentOffset + limit);
         }
@@ -98,7 +103,11 @@ export function useHistory() {
           });
         }
       } finally {
-        setIsRefreshing(false);
+        if (isLoadingMoreAction) {
+          setIsLoadingMore(false);
+        } else {
+          setIsRefreshing(false);
+        }
       }
     },
     [isRefreshing, lastFetchTime, toast, offset]
@@ -110,10 +119,10 @@ export function useHistory() {
   }, []);
 
   const loadMore = useCallback(() => {
-    if (historyData?.pagination.hasMore && !isRefreshing) {
-      fetchHistory(false);
+    if (historyData?.pagination.hasMore && !isRefreshing && !isLoadingMore) {
+      fetchHistory(false, false, true);
     }
-  }, [fetchHistory, historyData?.pagination.hasMore, isRefreshing]);
+  }, [fetchHistory, historyData?.pagination.hasMore, isRefreshing, isLoadingMore]);
 
   const refresh = useCallback(() => {
     fetchHistory(true, true);
@@ -121,7 +130,9 @@ export function useHistory() {
 
   return {
     historyData,
+    setHistoryData,
     isRefreshing,
+    isLoadingMore,
     fetchHistory,
     clearHistory,
     loadMore,

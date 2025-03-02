@@ -8,8 +8,6 @@ export const createHistoryStyles = (theme: ColorTheme) =>
     container: {
       flex: 1,
       backgroundColor: theme.background,
-      padding: 16,
-      paddingBottom: 0,
     },
     centerContent: {
       justifyContent: 'center',
@@ -80,11 +78,33 @@ export const createHistoryStyles = (theme: ColorTheme) =>
       gap: 12,
     },
     actionButton: {
-      color: theme.primary,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 6,
+    },
+    copyButton: {
+      backgroundColor: theme.goodButton.background,
+    },
+    copyButtonText: {
+      color: theme.goodButton.text,
       fontSize: 14,
+      fontWeight: '600',
+    },
+    redoButton: {
+      backgroundColor: theme.goodButton.background,
     },
     undoButton: {
-      color: theme.error,
+      backgroundColor: theme.badButton.background,
+    },
+    redoButtonText: {
+      color: theme.goodButton.text,
+      fontSize: 14,
+      fontWeight: '600',
+    },
+    undoButtonText: {
+      color: theme.badButton.text,
+      fontSize: 14,
+      fontWeight: '600',
     },
     emptyState: {
       flex: 1,
@@ -107,6 +127,27 @@ export const createHistoryStyles = (theme: ColorTheme) =>
     loadingText: {
       color: theme.secondary,
       fontSize: 14,
+    },
+    loadingContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    warningContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: 4,
+      gap: 4,
+    },
+    warningText: {
+      color: theme.error,
+      fontSize: 12,
+    },
+    loadingButton: {
+      backgroundColor: theme.contentBackground,
+      minWidth: 70,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
 
