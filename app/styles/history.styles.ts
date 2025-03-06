@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { Colors } from '@/constants/Colors';
 
 type ColorTheme = typeof Colors.light;
@@ -38,11 +38,17 @@ export const createHistoryStyles = (theme: ColorTheme) =>
       borderRadius: 8,
       padding: 16,
       marginBottom: 12,
-      shadowColor: theme.text,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 2,
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: theme === Colors.light ? 0.1 : 0.3,
+          shadowRadius: 8,
+        },
+        android: {
+          elevation: theme === Colors.light ? 2 : 4,
+        },
+      }),
     },
     codeHeader: {
       flexDirection: 'row',
