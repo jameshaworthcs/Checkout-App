@@ -1,5 +1,8 @@
 # CheckOut App
 
+> [!IMPORTANT]
+> CheckOut is no longer actively maintained. To contribute to this repository, please fork it. This project is licensed under the MIT License.
+
 This is the CheckOut App for iOS and Android, built with Expo.
 
 ## Get started
